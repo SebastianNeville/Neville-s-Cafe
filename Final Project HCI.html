@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neville Cafe</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#f8f5f0;
+}
+
+/* HEADER */
+
+header{
+    background:#6F4E37;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+header h1{
+    margin-bottom:5px;
+}
+
+/* NAVBAR */
+
+nav{
+    background:#4B3425;
+    padding:15px;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 15px;
+    font-weight:bold;
+}
+
+nav a:hover{
+    color:#F5E6CA;
+}
+
+/* NOTIFICATION */
+
+.notification{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:#6F4E37;
+    color:white;
+    padding:15px 20px;
+    border-radius:8px;
+    opacity:0;
+    transition:.3s;
+    z-index:999;
+}
+
+.notification.show{
+    opacity:1;
+}
+
+/* SECTION */
+
+section{
+    padding:50px 20px;
+}
+
+.hero{
+    text-align:center;
+    padding:80px 20px;
+}
+
+.hero h2{
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+.hero p{
+    color:#555;
+}
+
+/* MENU */
+
+.menu-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+.card h3{
+    margin-bottom:10px;
+}
+
+.price{
+    color:#6F4E37;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:5px;
+}
+
+select,input{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    background:#6F4E37;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#4B3425;
+}
+
+/* RESERVATION */
+
+.reservation{
+    max-width:500px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+.success{
+    text-align:center;
+    margin-top:15px;
+    color:green;
+}
+
+/* CART */
+
+.cart{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+.cart-item{
+    border-bottom:1px solid #ddd;
+    padding:15px 0;
+}
+
+.remove-btn{
+    background:#c0392b;
+}
+
+.remove-btn:hover{
+    background:#a93226;
+}
+
+.total{
+    font-size:24px;
+    font-weight:bold;
+    margin-top:20px;
+}
+
+/* FOOTER */
+
+footer{
+    background:#6F4E37;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+.hero h2{
+    font-size:30px;
+}
+
+nav a{
+    display:inline-block;
+    margin:5px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>☕ Neville Cafe</h1>
+    <p>Coffee • Matcha • Chocolate</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#menu">Menu</a>
+    <a href="#reservation">Reservation</a>
+    <a href="#cart">
+        Cart (<span id="cartCount">0</span>)
+    </a>
+</nav>
+
+<div id="notification" class="notification"></div>
+
+<section id="home" class="hero">
+
+    <h2>Welcome to Neville Cafe</h2>
+
+    <p>
+        Fresh coffee, cozy atmosphere,
+        and unforgettable experience.
+    </p>
+
+</section>
+
+<section id="menu">
+
+<h2 style="text-align:center;margin-bottom:25px;">
+Our Menu
+</h2>
+
+<div class="menu-container" id="menuContainer"></div>
+
+</section>
+
+<section id="reservation">
+
+<h2 style="text-align:center;margin-bottom:25px;">
+Table Reservation
+</h2>
+
+<div class="reservation">
+
+<form id="reservationForm">
+
+<input
+type="text"
+id="customerName"
+placeholder="Customer Name"
+required>
+
+<br><br>
+
+<input
+type="date"
+required>
+
+<br><br>
+
+<input
+type="time"
+required>
+
+<br><br>
+
+<input
+type="number"
+placeholder="Number of Guests"
+required>
+
+<br><br>
+
+<select required>
+<option value="">Select Table</option>
+<option>Indoor</option>
+<option>Outdoor</option>
+</select>
+
+<button type="submit">
+Reserve Table
+</button>
+
+</form>
+
+<p id="reservationMessage"
+class="success"></p>
+
+</div>
+
+</section>
+
+<section id="cart">
+
+<h2 style="text-align:center;margin-bottom:25px;">
+Your Cart
+</h2>
+
+<div class="cart">
+
+<div id="cartItems"></div>
+
+<div id="total" class="total">
+Total: Rp0
+</div>
+
+<button onclick="checkout()">
+Checkout
+</button>
+
+</div>
+
+</section>
+
+<footer>
+    © 2026 Neville Cafe
+</footer>
+
+<script>
+
+const menu = [
+
+{name:"Espresso",price:15000},
+{name:"Americano",price:18000},
+{name:"Cafe Latte",price:25000},
+{name:"Cappuccino",price:25000},
+{name:"Mocha",price:28000},
+{name:"Magic",price:27000},
+{name:"Cortado",price:22000},
+{name:"Matcha Latte",price:30000},
+{name:"Hot Chocolate",price:26000}
+
+];
+
+let cart =
+JSON.parse(localStorage.getItem("cart")) || [];
+
+const menuContainer =
+document.getElementById("menuContainer");
+
+menu.forEach((item,index)=>{
+
+menuContainer.innerHTML += `
+
+<div class="card">
+
+<h3>${item.name}</h3>
+
+<p class="price">
+Rp${item.price.toLocaleString()}
+</p>
+
+<label>Temperature</label>
+
+<select id="temp${index}">
+<option>Hot</option>
+<option>Ice</option>
+</select>
+
+<label>Sugar Level</label>
+
+<select id="sugar${index}">
+<option>0%</option>
+<option>25%</option>
+<option>50%</option>
+<option>75%</option>
+<option>100%</option>
+</select>
+
+<label>Quantity</label>
+
+<input
+type="number"
+id="qty${index}"
+value="1"
+min="1">
+
+<button onclick="addToCart(${index})">
+Add To Cart
+</button>
+
+</div>
+
+`;
+
+});
+
+function showNotification(message){
+
+const notif =
+document.getElementById("notification");
+
+notif.innerHTML = message;
+
+notif.classList.add("show");
+
+setTimeout(()=>{
+
+notif.classList.remove("show");
+
+},2000);
+
+}
+
+function addToCart(index){
+
+let item = menu[index];
+
+let temp =
+document.getElementById(`temp${index}`).value;
+
+let sugar =
+document.getElementById(`sugar${index}`).value;
+
+let qty =
+parseInt(
+document.getElementById(`qty${index}`).value
+);
+
+cart.push({
+
+name:item.name,
+price:item.price,
+temp:temp,
+sugar:sugar,
+qty:qty
+
+});
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+);
+
+renderCart();
+
+showNotification(
+`${item.name} added to cart ✓`
+);
+
+}
+
+function updateCartCount(){
+
+let totalItems = 0;
+
+cart.forEach(item=>{
+
+totalItems += item.qty;
+
+});
+
+document.getElementById(
+"cartCount"
+).textContent = totalItems;
+
+}
+
+function renderCart(){
+
+const cartItems =
+document.getElementById("cartItems");
+
+cartItems.innerHTML = "";
+
+let total = 0;
+
+cart.forEach((item,index)=>{
+
+let subtotal =
+item.price * item.qty;
+
+total += subtotal;
+
+cartItems.innerHTML += `
+
+<div class="cart-item">
+
+<h3>${item.name}</h3>
+
+<p>
+Temperature:
+${item.temp}
+</p>
+
+<p>
+Sugar:
+${item.sugar}
+</p>
+
+<p>
+Quantity:
+${item.qty}
+</p>
+
+<p>
+Subtotal:
+Rp${subtotal.toLocaleString()}
+</p>
+
+<button
+class="remove-btn"
+onclick="removeItem(${index})">
+
+Remove
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("total")
+.innerHTML =
+`Total: Rp${total.toLocaleString()}`;
+
+updateCartCount();
+
+}
+
+function removeItem(index){
+
+cart.splice(index,1);
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+);
+
+renderCart();
+
+}
+
+function checkout(){
+
+if(cart.length===0){
+
+showNotification(
+"Cart is empty!"
+);
+
+return;
+
+}
+
+showNotification(
+"Payment Successful ✓"
+);
+
+cart=[];
+
+localStorage.removeItem("cart");
+
+renderCart();
+
+}
+
+document
+.getElementById("reservationForm")
+.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+let name =
+document.getElementById(
+"customerName"
+).value;
+
+document.getElementById(
+"reservationMessage"
+).innerHTML =
+`Reservation successful for ${name}!`;
+
+this.reset();
+
+}
+);
+
+renderCart();
+
+</script>
+
+</body>
+</html>
